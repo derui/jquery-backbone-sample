@@ -1,6 +1,7 @@
 .vagrant
 .sass-cache
 node_modules
+bower_components
 
 /public/*
 !/public/.keepme

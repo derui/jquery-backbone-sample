@@ -2,10 +2,32 @@
 <html lang="ja">
   <head>
     <meta charset="UTF-8">
+    <link href="/vendor/css/normalize.css" rel="stylesheet">
+    <link href="/vendor/css/foundation.css" rel="stylesheet">
   </head>
   <body>
-    <div class="todo-main">
+    <nav class="top-bar" data-topbar role="navigation">
+      <ul class="title-area">
+        <li class="name"><h1><a href="#">サンプルTODO</a></h1></li>
+        <li class="toggle-topbar menu-icon"><span>Menu</span></li>
+      </ul>
+
+    </nav>
+    <div class="todo-main row">
+      <div class="large-3 columns"></div>
+      <div class="large-6 columns">
+        test
+      </div>
+      <div class="large-3 columns"></div>
     </div>
-    <script src="/js/main.js"></script>
+    <div class="todo__row--template">
+    </div>
+    <script src="/vendor/js/vendor/jquery.js"></script>
+    <script src="/vendor/js/vendor/jquery.cookie.js"></script>
+    <script src="/vendor/js/vendor/fastclick.js"></script>
+    <script src="/vendor/js/vendor/modernizr.js"></script>
+    <script src="/vendor/js/vendor/placeholder.js"></script>
+    <script src="/vendor/js/foundation.min.js"></script>
+    <script src="/js/app.js"></script>
   </body>
 </html>
