@@ -1,4 +1,12 @@
-gulp = (require './gulp')(['browserify', 'watch', 'loopback', 'copy', 'clean'])
+gulp = (require './gulp')([
+  'browserify',
+   'watch',
+   'loopback',
+   'copy',
+   'clean',
+   'compass',
+   'jshint'
+   ])
 
 sequence = require 'run-sequence'
 

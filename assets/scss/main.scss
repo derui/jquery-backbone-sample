@@ -1,0 +1,31 @@
+@import "compass";
+
+$todo_space: 8px;
+$todo_base_color: #EB9C1D;
+
+.todo-header {
+  @include border-radius(4px 4px 0 0);
+  background-color: $todo_base_color;
+
+  @at-root {
+    &__column {
+      padding: ($todo_space) ($todo_space / 2);
+
+      border: 1px solid white;
+      
+      font-weight: bold;
+      font-size: 1.2em;
+      
+
+      color: lighten($todo_base_color, 30%);
+    }
+  }
+}
+
+.todo {
+  @at-root {
+    &__content--template {
+      display: none;
+    }
+  }
+}
