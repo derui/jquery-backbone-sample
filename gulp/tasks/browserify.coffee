@@ -21,7 +21,6 @@ transform = require('node-underscorify').transform
 gulp.task 'watch:browserify', ->
   b = browserify
     entries : './assets/js/main.js'
-    noParse : ['jquery', 'underscore']
     debug : true
     extensions: ['.js', '.html']
     fullPaths: true
@@ -46,12 +45,12 @@ gulp.task 'watch:browserify', ->
       .on('error', (e) ->
         gutil.log('Browserify Error', e);
       )
-      .pipe(source 'app.js')
-      .pipe(buffer())
-      .pipe(sourcemaps.init(loadMaps: true))
-      .pipe(uglify())
-      .pipe(sourcemaps.write())
-      .pipe(gulp.dest('./public/js'))
+      .pipe source 'app.js'
+      .pipe buffer()
+      .pipe sourcemaps.init(loadMaps: true)
+      .pipe uglify()
+      .pipe sourcemaps.write('./')
+      .pipe gulp.dest('./public/js')
 
   w.on 'update', ->
     gutil.log('Finish browserify build.');

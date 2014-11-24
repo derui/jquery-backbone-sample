@@ -3,6 +3,19 @@
 $todo_space: 8px;
 $todo_base_color: #EB9C1D;
 
+.valign-middle {
+  display: table;
+  > .columns {
+    display: table-cell;
+    vertical-align: middle;
+  }
+
+  > .columns,
+  > [class*="column"] + [class*="column"]:last-child {
+    float: none;
+  }
+}
+
 .todo-header {
   @include border-radius(4px 4px 0 0);
   background-color: $todo_base_color;
@@ -23,9 +36,53 @@ $todo_base_color: #EB9C1D;
 }
 
 .todo {
+  %content_base {
+    padding: $todo_space / 2;
+  }
+  border: 3px solid $todo_base_color;
+  
   @at-root {
     &__content--template {
       display: none;
+    }
+
+    &__content {
+      border-top: 1px solid darken($todo_base_color, 20%);
+      border-bottom: 1px solid darken($todo_base_color, 20%);
+
+      &:first-child {
+        border-top : none;
+      }
+
+      &:last-child {
+        border-bottom: none;
+      }
+      
+      @at-root {
+        &__limit-date, &__text, &__finished {
+          @extend %content_base;
+        }
+      }
+    }
+
+    &__delete__button {
+      display: inline-block;
+      padding: ($todo_space / 3) $todo_space;
+      
+      background-color: adjust-hue($todo_base_color, -20);
+      color: white;
+
+      font-size: 0.8em;
+
+      @include transition(background-color 0.2s ease-in-out);
+
+      &:hover {
+        background-color: darken(adjust-hue($todo_base_color, -20), 15%);
+      }
+
+      &:active {
+        background-color: darken(adjust-hue($todo_base_color, -20), 25%);
+      }
     }
   }
 }
