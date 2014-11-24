@@ -5,30 +5,40 @@ gutil = require 'gulp-util'
 source = require 'vinyl-source-stream'
 glob = require 'glob'
 path = require 'path'
-fs = require 'fs'
 remapify = require 'remapify'
 
 transform = require('node-underscorify').transform
   extensions: ['html']
+  requires : [{variable : '_', module : 'underscore'}]
 
 gulp.task 'watch:browserify', ->
-  b = browserify path.resolve 'assets/js/main.js'
+  b = browserify
+    entries : path.resolve('assets/js/main.js')
+    noparse : ['jquery', 'underscore']
+    debug : true
+    extensions: ['.js', '.html']
+    fullPaths: true
+    cache: {}
+    packageCache : {}
 
-  b.plugin remapify, [
-    src: './**/*.js'
+  b.transform transform
+
+  b.plugin 'minifyify',
+    map: 'app.map.json'
+    output: './public/js/app.js'
+
+  b.plugin remapify, [{
+    src: './assets/js/**/*.js'
     expose: 'app/'
-    cwd : __dirname + '/../assets/js'
-  ,
+  }, {
     src: './**/*.html'
     expose: 'tmpl'
-    cwd : __dirname + '/../assets/template'
-  ]
-  b.transform transform
+    cwd: 'assets/template'
+  }]
 
   w = watchify b, watchify.args
 
   rebundle = ->
-    gutil.log('Finish browserify build.');
     w.bundle()
       .on('error', (e) ->
         gutil.log('Browserify Error', e);
@@ -36,6 +46,8 @@ gulp.task 'watch:browserify', ->
       .pipe(source('app.js'))
       .pipe(gulp.dest('./public/js'))
 
-  w.on 'update', rebundle
+  w.on 'update', ->
+    gutil.log('Finish browserify build.');
+    return rebundle()
 
   rebundle()
