@@ -1,0 +1,19 @@
+{
+  "name": "jquery-backbone-sample",
+  "version": "0.0.0",
+  "homepage": "https://github.com/derui/jquery-backbone-sample",
+  "authors": [
+    "derui <derutakayu@gmail.com>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "foundation": "zurb/bower-foundation#~5.4.7"
+  }
+}
