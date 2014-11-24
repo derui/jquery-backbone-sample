@@ -11,4 +11,4 @@ gulp = (require './gulp')([
 sequence = require 'run-sequence'
 
 gulp.task 'serve', ->
-  sequence 'copy', ['watch', 'server']
+  sequence 'copy', 'compass', ['watch', 'server']
