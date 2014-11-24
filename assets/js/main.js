@@ -48,13 +48,14 @@ $(function() {
     $button.prop('disabled', true);
 
     // 新しい行を追加する。
-    api.post('todo', data).then(function() {
+    api.post('todo', data).then(function(args) {
       _.delay(function() {
         $content.prop('disabled', false);
         $date.prop('disabled', false);
         $button.prop('disabled', false);
       }, 500);
-      
+
+      return $.Deferred().resolve(args);
     }).done(makeRow);
   });
 });

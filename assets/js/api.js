@@ -41,17 +41,33 @@ module.exports = {
    * 指定したリソースに対してputメソッドを実行する。
    * 
    * @param {String} resource post先のリソース名
+   * @param {String} id put対象のリソースid
    * @param {Object} data postするデータオブジェクト
    * @returns {jQuery.Deferred} deferredオブジェクト
    */
-  put: function(resource, data) {
+  put: function(resource, id, data) {
     'use strict';
     return $.ajax({
       type: 'PUT',
-      url : url(resource),
+      url : url(resource) + '/' + id,
       data: JSON.stringify(data),
       contentType: 'application/json',
       dataType : 'json'
+    });
+  },
+
+  /**
+   * 指定したリソースのidに対してdeleteメソッドを実行する
+   * 
+   * @param {String} resource post先のリソース名
+   * @param {String} id 削除するリソースのid
+   * @returns {jQuery.Deferred} deferredオブジェクト
+   */
+  del: function(resource, id) {
+    'use strict';
+    return $.ajax({
+      type: 'DELETE',
+      url : url(resource) + '/' + id
     });
   }
 };

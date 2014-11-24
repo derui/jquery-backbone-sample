@@ -13,7 +13,9 @@ gulp.task 'compass', ->
         @emit 'end'
     ))
     .pipe(compass
+      css: 'build/css'
       sass: 'assets/scss'
     )
+    .pipe(gulp.dest('./build'))
     .pipe(minifyCSS())
     .pipe(gulp.dest('./public/css'))
