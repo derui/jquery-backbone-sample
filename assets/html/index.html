@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <link href="/vendor/css/normalize.css" rel="stylesheet">
     <link href="/vendor/css/foundation.css" rel="stylesheet">
+    <link href="/css/main.css" rel="stylesheet">
   </head>
   <body>
     <nav class="top-bar" data-topbar role="navigation">
@@ -13,14 +14,41 @@
       </ul>
 
     </nav>
-    <div class="todo-main row">
-      <div class="large-3 columns"></div>
-      <div class="large-6 columns">
-        test
+    <div class="todo-appender row">
+      <div class="todo__append row">
+        <form>
+          <div class="large-offset-2 columns"></div>
+          <div class="large-8 large-centered columns">
+            <div class="row collapse postfix-round">
+              <div class="large-3 columns">
+                <input class="todo__append__date large-3.columns" type="datetime-local" placeholder="期日">
+              </div>
+              <div class="large-7 columns">
+                <input class="todo__append__content large-7.columns" type="text" placeholder="TODOの内容">
+              </div>
+              <div class="small-2 columns">
+                <button type="button" class="todo__append__submit postfix button">追加</button>
+              </div>
+            </div>
+          </div>
+          <div class="large-offset-2 columns"></div>
+        </form>
       </div>
-      <div class="large-3 columns"></div>
     </div>
-    <div class="todo__row--template">
+
+    <div class="todo-header row">
+      <div class="todo-header__column large-3 columns">期日</div>
+      <div class="todo-header__column large-8 columns">内容</div>
+      <div class="todo-header__column large-1 columns">削除</div>
+    </div>
+    
+    <div class="todo__contents row">
+    </div>
+    <div class="todo__content--template">
+      <div class="large-3 columns"></div>
+      <div class="large-8 columns">
+      </div>
+      <div class="large-1 columns"></div>
     </div>
     <script src="/vendor/js/vendor/jquery.js"></script>
     <script src="/vendor/js/vendor/jquery.cookie.js"></script>

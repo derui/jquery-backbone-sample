@@ -6,6 +6,13 @@ source = require 'vinyl-source-stream'
 glob = require 'glob'
 path = require 'path'
 remapify = require 'remapify'
+mold = require 'mold-source-map'
+exorcist = require 'exorcist'
+vtrans = require 'vinyl-transform'
+concat = require 'gulp-concat'
+buffer = require 'vinyl-buffer'
+sourcemaps = require 'gulp-sourcemaps'
+uglify = require 'gulp-uglify'
 
 transform = require('node-underscorify').transform
   extensions: ['html']
@@ -13,8 +20,8 @@ transform = require('node-underscorify').transform
 
 gulp.task 'watch:browserify', ->
   b = browserify
-    entries : path.resolve('assets/js/main.js')
-    noparse : ['jquery', 'underscore']
+    entries : './assets/js/main.js'
+    noParse : ['jquery', 'underscore']
     debug : true
     extensions: ['.js', '.html']
     fullPaths: true
@@ -22,10 +29,6 @@ gulp.task 'watch:browserify', ->
     packageCache : {}
 
   b.transform transform
-
-  b.plugin 'minifyify',
-    map: 'app.map.json'
-    output: './public/js/app.js'
 
   b.plugin remapify, [{
     src: './assets/js/**/*.js'
@@ -43,7 +46,11 @@ gulp.task 'watch:browserify', ->
       .on('error', (e) ->
         gutil.log('Browserify Error', e);
       )
-      .pipe(source('app.js'))
+      .pipe(source 'app.js')
+      .pipe(buffer())
+      .pipe(sourcemaps.init(loadMaps: true))
+      .pipe(uglify())
+      .pipe(sourcemaps.write())
       .pipe(gulp.dest('./public/js'))
 
   w.on 'update', ->
