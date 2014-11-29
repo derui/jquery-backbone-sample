@@ -25,5 +25,14 @@ module.exports = Backbone.Model.extend({
       attrs.limitDate = moment(attrs.limitDate).toISOString();
     }
     return attrs;
+  },
+
+  /**
+   * このTODOが完了しているかどうかを返す
+   * @method isFinished
+   * @return {Boolean} 完了しているかどうか
+   */
+  isFinished: function() {
+    return !!this.get('finished');
   }
 });
