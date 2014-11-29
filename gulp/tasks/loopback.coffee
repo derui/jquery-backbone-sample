@@ -5,7 +5,7 @@ server = require '../../server'
 
 connectConfig =
 port: 3000
-hostname: 'localhost'
+hostname: '0.0.0.0'
 
 gulp.task 'server',  ->
   # mockサーバーの起動
@@ -22,5 +22,6 @@ gulp.task 'server',  ->
     .pipe(webserver
       livereload:
         port: 8002
+      host: '0.0.0.0'
       port: 8000
   )
