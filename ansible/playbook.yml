@@ -1,0 +1,59 @@
+---
+- hosts: 127.0.0.1
+  connection: local
+  remote_user: vagrant
+  vars:
+    node_version: '0.10.33'
+    nodebrew_path: '.nodebrew/current/bin'
+    rbenv_path: '.rbenv/bin'
+  tasks:
+    - command: mkdir /home/vagrant/.rbenv
+      register: result
+      ignore_errors: True
+    - name: install rbenv
+      shell: git clone https://github.com/sstephenson/rbenv.git /home/vagrant/.rbenv
+      when: result|success
+    - shell: git clone https://github.com/sstephenson/ruby-build.git /home/vagrant/.rbenv/plugins/ruby-build
+      when: result|success
+    - name: setting bashrc
+      shell: echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> /home/vagrant/.bashrc
+    - shell: echo 'eval "$(rbenv init -)"' >> /home/vagrant/.bashrc
+    - name: install ruby2.1
+      shell: eval "$(rbenv init -)" && rbenv install 2.1.2
+      ignore_errors: True
+      environment:
+        PATH: "/home/vagrant/{{rbenv_path}}:{{ansible_env.PATH}}"
+    - shell: eval "$(rbenv init -)" && rbenv rehash
+      environment:
+        PATH: "/home/vagrant/{{rbenv_path}}:{{ansible_env.PATH}}"
+    - shell: eval "$(rbenv init -)" && rbenv global 2.1.2
+      environment:
+        PATH: "/home/vagrant/{{rbenv_path}}:{{ansible_env.PATH}}"
+
+    - name: install bundler
+      shell: eval "$(rbenv init -)" && gem install bundler
+      environment:
+        PATH: "/home/vagrant/{{rbenv_path}}:{{ansible_env.PATH}}"
+
+    - name: Install nodebrew
+      apt: name=perl
+      sudo: yes
+    - apt: name=curl
+      sudo: yes
+    - shell: curl -L git.io/nodebrew | perl - setup
+    - shell: echo 'export PATH=$HOME/.nodebrew/current/bin:$PATH' >> /home/vagrant/.bashrc
+
+    - name: Install nodejs version {{node_version}}
+      shell: nodebrew install-binary v{{node_version}}
+      ignore_errors: True
+      environment:
+        PATH: "/home/vagrant/{{nodebrew_path}}:{{ansible_env.PATH}}"
+    - name: Setup to use nodejs
+      shell: nodebrew use {{node_version}}
+      environment:
+        PATH: "/home/vagrant/{{nodebrew_path}}:{{ansible_env.PATH}}"
+
+    - name: Install global npm modules
+      shell: npm install -g bower gulp
+      environment:
+        PATH: "/home/vagrant/{{nodebrew_path}}:{{ansible_env.PATH}}"

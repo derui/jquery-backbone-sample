@@ -20,6 +20,7 @@ gulp.task 'server',  ->
 
   gulp.src(['public'])
     .pipe(webserver
-      livereload: true
+      livereload:
+        port: 8002
       port: 8000
   )
