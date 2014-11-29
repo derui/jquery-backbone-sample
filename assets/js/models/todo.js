@@ -5,6 +5,7 @@
 var Backbone = require('backbone');
 var moment = require('moment');
 var Api = require('app/utils/api-util');
+var _ = require('underscore');
 
 module.exports = Backbone.Model.extend({
   defaults: {
@@ -34,5 +35,11 @@ module.exports = Backbone.Model.extend({
    */
   isFinished: function() {
     return !!this.get('finished');
+  },
+
+  validate: function() {
+    if (!this.get('content') || _.isString(this.get('content'))) {
+      return 'Content must contain valid string';
+    }
   }
 });

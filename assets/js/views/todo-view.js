@@ -21,7 +21,24 @@ module.exports = Backbone.View.extend({
    * @method onFinishedClick
    */
   onFinishedChange: function() {
-    
+
+    if (this.$('.todo__delete__button').prop('disabled')) {
+      return;
+    }
+
+    // リクエストの開始時点でオーバーレイをトグルする
+    this.model.once('request error', function() {
+      this.$('.todo__content__overlay').toggleClass('is-active');
+    }, this);
+
+    // リクエストが完了したらオーバーレイを非表示にする
+    this.model.once('sync', function() {
+      _.delay(function() {
+        this.$('.todo__content__overlay').toggleClass('is-active');
+      }, 500, this);
+    }, this);
+
+    this.model.save({finished : !this.model.get('finished')});
   },
 
   /**
@@ -29,7 +46,12 @@ module.exports = Backbone.View.extend({
    * @method onDeleteClick
    */
   onDeleteClick: function() {
+    // modelをdestoryし、正常に終了したら自身も削除する
+    this.model.once('sync', function() {
+      this.$el.slideUp(200).fadeOut(200, this.remove.bind(this));
+    }, this);
     
+    this.model.destroy();
   },
 
   render: function() {
