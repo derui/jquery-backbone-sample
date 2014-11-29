@@ -16,6 +16,15 @@ module.exports = Backbone.View.extend({
     'click .todo__delete__button' : 'onDeleteClick'
   },
 
+  initialize: function(param) {
+    /**
+     * 初期表示時のアニメーションを行うかどうか
+     * @property _initialAnimation
+     * @type Boolean
+     */
+    this._initialAnimation = (param && param.initialAnimation) || false;
+  },
+
   /**
    * overlayをトグルする
    * @method _toggleOverlay
@@ -77,11 +86,28 @@ module.exports = Backbone.View.extend({
   },
 
   render: function() {
-    this.$el.empty().append(this.template(_.exnted({}, this.model.attributes, {
-      limitDate : moment(this.model.get('limitDate')).format('YYYY/MM/DD HH:MM')
+    var limitDate = this.model.get('limitDate');
+    this.$el.empty();
+
+    if (this._initialAnimation) {
+      this.$el.hide();
+    }
+
+    if (limitDate) {
+      limitDate = moment(this.model.get('limitDate')).format('YYYY/MM/DD HH:MM');
+    } else {
+      limitDate = 'No limit';
+    }
+
+    this.$el.append(this.template(_.exnted({}, this.model.attributes, {
+      limitDate : limitDate
     })));
 
     this.$('.finished__current-state').prop('checked', this.model.isFinished());
+
+    if (this._initialAnimation) {
+      this.$el.slideDown(200);
+    }
 
     return this;
   }
