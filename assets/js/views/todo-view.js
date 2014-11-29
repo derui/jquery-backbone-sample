@@ -17,28 +17,48 @@ module.exports = Backbone.View.extend({
   },
 
   /**
+   * overlayをトグルする
+   * @method _toggleOverlay
+   * @private
+   */
+  _toggleOverlay : function() {
+    this.$('.todo__content__overlay').toggleClass('is-active');
+  },
+
+  /**
    * 完了スイッチが操作された時のイベントハンドラ
    * @method onFinishedClick
    */
   onFinishedChange: function() {
 
-    if (this.$('.todo__delete__button').prop('disabled')) {
-      return;
-    }
-
     // リクエストの開始時点でオーバーレイをトグルする
-    this.model.once('request error', function() {
-      this.$('.todo__content__overlay').toggleClass('is-active');
-    }, this);
+    this.listenToOnce(this.model, 'request error', this._toggleOverlay);
 
     // リクエストが完了したらオーバーレイを非表示にする
     this.model.once('sync', function() {
-      _.delay(function() {
-        this.$('.todo__content__overlay').toggleClass('is-active');
-      }, 500, this);
+      _.delay(this._toggleOverlay, 500);
     }, this);
 
     this.model.save({finished : !this.model.get('finished')});
+  },
+
+  /**
+   * アニメーションと自身の削除を行う
+   * @method _animateAndRemove
+   * @private
+   */
+  _animateAndRemove: function() {
+    this.$el.slideUp(200).fadeOut(200, this.remove.bind(this));
+  },
+
+  /**
+   * 削除ボタンの有効と無効を切り替える
+   * @method _toggleDeleteButton
+   * @private
+   */
+  _toggleDeleteButton: function() {
+    var $button = this.$('.todo__delete__button');
+    $button.prop('disabled', $button.prop('disabled'));
   },
 
   /**
@@ -46,11 +66,13 @@ module.exports = Backbone.View.extend({
    * @method onDeleteClick
    */
   onDeleteClick: function() {
+    if (this.$('.todo__delete__button').prop('disabled')) {
+      return;
+    }
+
     // modelをdestoryし、正常に終了したら自身も削除する
-    this.model.once('sync', function() {
-      this.$el.slideUp(200).fadeOut(200, this.remove.bind(this));
-    }, this);
-    
+    this.listenToOnce(this.model, 'sync', this._animateAndRemove);
+    this.listenToOnce(this.model, 'request error', this._toggleDeleteButton);
     this.model.destroy();
   },
 
