@@ -8,8 +8,10 @@ var Appender = require('app/views/todo-appender');
 
 $(function() {
   'use strict';
-  var appender = new Appender();
   var collection = new Collection();
+  var appender = new Appender({
+    collection: collection
+  });
   var todos = new TodosView({
     collection: collection
   });

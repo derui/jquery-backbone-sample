@@ -42,14 +42,10 @@ module.exports = Backbone.View.extend({
    */
   onFinishedChange: function() {
     'use strict';
+    var throttle = _.throttle(_.bind(this._toggleOverlay, this), 500);
 
-    // リクエストの開始時点でオーバーレイをトグルする
-    this.listenToOnce(this.model, 'request error', this._toggleOverlay);
-
-    // リクエストが完了したらオーバーレイを非表示にする
-    this.model.once('sync', function() {
-      _.delay(this._toggleOverlay, 500);
-    }, this);
+    // リクエストの開始、終了、エラー時にそれぞれトグルするようにする
+    this.listenToOnce(this.model, 'sync request error', throttle);
 
     this.model.save({finished : !this.model.get('finished')});
   },
@@ -106,7 +102,7 @@ module.exports = Backbone.View.extend({
       limitDate = 'No limit';
     }
 
-    this.$el.append(this.template(_.exnted({}, this.model.attributes, {
+    this.$el.append(this.template(_.extend({}, this.model.attributes, {
       limitDate : limitDate
     })));
 

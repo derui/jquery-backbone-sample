@@ -40,7 +40,7 @@ module.exports = Backbone.Model.extend({
 
   validate: function() {
     'use strict';
-    if (!this.get('content') || _.isString(this.get('content'))) {
+    if (!this.get('content') || !_.isString(this.get('content'))) {
       return 'Content must contain valid string';
     }
     return undefined;

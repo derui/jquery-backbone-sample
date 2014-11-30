@@ -62,7 +62,6 @@ module.exports = Backbone.View.extend({
 
     this._alert.hide();
 
-    this.disable();
     this.listenToOnce(this.model, 'sync', function() {
       this.collection.add(this.model);
 
@@ -106,9 +105,8 @@ module.exports = Backbone.View.extend({
   _bindEvents : function() {
     'use strict';
     this.listenTo(this.model, 'change', this.handleChange);
-    this.listenTo(this.model, 'error sync', function() {
-      this.enable();
-    });
+    this.listenTo(this.model, 'request', this.disable);
+    this.listenTo(this.model, 'error sync', this.enable);
   },
 
   handleChange : function() {

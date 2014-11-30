@@ -74,7 +74,7 @@ $todo_base_color: #EB9C1D;
           opacity: 0;
           background-color: rgba(black, 0.15);
 
-          @include transition(opacity 0.1s ease-in);
+          @include transition(opacity 0.2s ease-in);
 
           &.is-active {
             opacity: 1;

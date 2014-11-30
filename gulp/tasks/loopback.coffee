@@ -22,6 +22,7 @@ gulp.task 'server',  ->
     .pipe(webserver
       livereload:
         port: 8002
+        enable: true
       host: '0.0.0.0'
       port: 8000
   )
