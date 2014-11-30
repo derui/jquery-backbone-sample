@@ -11,7 +11,6 @@ module.exports = Backbone.View.extend({
 
     // collectionの読み込みが完了したら再レンダリングする。
     this.listenToOnce(this.collection, 'sync', this.render);
-    this.listenTo(this.collection, 'remove', this.render);
     this.listenTo(this.collection, 'add', this.handleAdd);
   },
 

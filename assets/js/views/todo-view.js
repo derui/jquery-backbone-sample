@@ -57,7 +57,9 @@ module.exports = Backbone.View.extend({
    */
   _animateAndRemove: function() {
     'use strict';
-    this.$el.slideUp(200).fadeOut(200, this.remove.bind(this));
+    this.$el.slideUp(200).fadeOut(200, function() {
+      this.remove();
+    }.bind(this));
   },
 
   /**
