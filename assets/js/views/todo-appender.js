@@ -1,6 +1,7 @@
 
 var Backbone = require('backbone');
 var Todo = require('app/models/todo');
+var Alert = require('./alert');
 
 module.exports = Backboen.View.extend({
   className: 'todo-appender row collapse',
@@ -9,6 +10,11 @@ module.exports = Backboen.View.extend({
 
   initialize: function() {
     this.refreshTodo();
+
+    this._alert = new Alert({
+      type: 'warning',
+      model : this.model
+    });
   },
 
   events: {
@@ -45,6 +51,13 @@ module.exports = Backboen.View.extend({
    * @private
    */
   onAppendClick: function() {
+    if (this.$('.todo__append__button').prop('disabled')) {
+      return;
+    }
+
+    this._alert.hide();
+
+    this.disable();
     this.listenToOnce(this.model, 'sync', function() {
       this.collection.add(this.model);
 
@@ -52,6 +65,20 @@ module.exports = Backboen.View.extend({
     }, this);
 
     this.model.save({});
+  },
+
+  disable : function() {
+    this._setAllElementDisabled(true);
+  },
+
+  enable : function() {
+    this._setAllElementDisabled(false);
+  },
+
+  _setAllElementDisabled: function(disabled) {
+    this.$('.todo__append__button').prop('disabled', disabled);
+    this.$('.todo__append__content').prop('disabled', disabled);
+    this.$('.todo__append__date').prop('disabled', disabled);
   },
 
   refreshTodo : function() {
@@ -68,6 +95,9 @@ module.exports = Backboen.View.extend({
 
   _bindEvents : function() {
     this.listenTo(this.model, 'change'. this.handleChange);
+    this.listenTo(this.model, 'error sync', function() {
+      this.enable();
+    });
   },
 
   handleChange : function() {
@@ -77,6 +107,8 @@ module.exports = Backboen.View.extend({
 
   render: function() {
     this.$el.empty().append(this.template());
+
+    this.$('.todo__append__content--alert').append(this._alert.render().$el.hide());
 
     return this;
   }
