@@ -34,12 +34,15 @@ module.exports = Backbone.Model.extend({
    * @return {Boolean} 完了しているかどうか
    */
   isFinished: function() {
+    'use strict';
     return !!this.get('finished');
   },
 
   validate: function() {
+    'use strict';
     if (!this.get('content') || _.isString(this.get('content'))) {
       return 'Content must contain valid string';
     }
+    return undefined;
   }
 });

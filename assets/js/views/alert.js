@@ -1,6 +1,5 @@
 
 var Backbone = require('backbone');
-var _ = require('underscore');
 
 module.exports = Backbone.View.extend({
   className : 'alert-box',
@@ -9,6 +8,8 @@ module.exports = Backbone.View.extend({
 
   events : {
     'click .close' : function() {
+      'use strict';
+      this.hide();
       if (this.onClose) {
         this.onClose();
       }
@@ -16,6 +17,7 @@ module.exports = Backbone.View.extend({
   },
 
   initialize: function(param) {
+    'use strict';
     this.listenTo(this.model, 'invalid', this.handleInvalid);
 
     this.type = (param && param.type) || 'warning';
@@ -23,12 +25,14 @@ module.exports = Backbone.View.extend({
   },
 
   handleInvalid: function(model, error) {
+    'use strict';
     this.text = error;
 
     this.render().$el.show();
   },
 
   setModel : function(model) {
+    'use strict';
     this.stopListening(this.model);
     this.model = model;
 
@@ -42,6 +46,7 @@ module.exports = Backbone.View.extend({
    * @return {Views.Alert}
    */
   show: function() {
+    'use strict';
     this.$el.show();
 
     return this;
@@ -54,12 +59,14 @@ module.exports = Backbone.View.extend({
    * @return {Views.Alert}
    */
   hide: function() {
+    'use strict';
     this.$el.hide();
 
     return this;
   },
 
   render : function() {
+    'use strict';
     this.$el.empty().append(this.template({text : this.text}));
 
     this.$el.addClass(this.type);

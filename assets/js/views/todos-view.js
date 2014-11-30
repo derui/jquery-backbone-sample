@@ -7,6 +7,8 @@ module.exports = Backbone.View.extend({
   className: 'todo row display',
 
   initialize: function() {
+    'use strict';
+
     // collectionの読み込みが完了したら再レンダリングする。
     this.listenTo(this.collection, 'remove sync', this.render);
     this.listenTo(this.collection, 'add', this.handleAdd);
@@ -20,6 +22,7 @@ module.exports = Backbone.View.extend({
    * @param {Models.Todo} model Collectionに追加されたmodel
    */
   handleAdd : function(model) {
+    'use strict';
     // viewの生成時に、initialAnimationを有効にする
     var view = new TodoView({
       model: model,
@@ -29,6 +32,7 @@ module.exports = Backbone.View.extend({
   },
 
   render: function() {
+    'use strict';
     this.$el.empty();
 
     // collectionにあるmodelをそれぞれViewとしてレンダリングする

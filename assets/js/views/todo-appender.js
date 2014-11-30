@@ -3,12 +3,14 @@ var Backbone = require('backbone');
 var Todo = require('app/models/todo');
 var Alert = require('./alert');
 
-module.exports = Backboen.View.extend({
+module.exports = Backbone.View.extend({
+  tagName: 'div',
   className: 'todo-appender row collapse',
 
   template: require('tmpl/appender.html'),
 
   initialize: function() {
+    'use strict';
     this.refreshTodo();
 
     this._alert = new Alert({
@@ -29,6 +31,7 @@ module.exports = Backboen.View.extend({
    * @private
    */
   onDateChange: function() {
+    'use strict';
     var $date = this.$('.todo__append__date');
 
     this.model.set('limitDate', $date.val());
@@ -40,6 +43,7 @@ module.exports = Backboen.View.extend({
    * @private
    */
   onContentChange: function() {
+    'use strict';
     var $content = this.$('.todo__append__content');
 
     this.model.set('content', $content.val());
@@ -51,6 +55,7 @@ module.exports = Backboen.View.extend({
    * @private
    */
   onAppendClick: function() {
+    'use strict';
     if (this.$('.todo__append__button').prop('disabled')) {
       return;
     }
@@ -68,20 +73,24 @@ module.exports = Backboen.View.extend({
   },
 
   disable : function() {
+    'use strict';
     this._setAllElementDisabled(true);
   },
 
   enable : function() {
+    'use strict';
     this._setAllElementDisabled(false);
   },
 
   _setAllElementDisabled: function(disabled) {
+    'use strict';
     this.$('.todo__append__button').prop('disabled', disabled);
     this.$('.todo__append__content').prop('disabled', disabled);
     this.$('.todo__append__date').prop('disabled', disabled);
   },
 
   refreshTodo : function() {
+    'use strict';
     var todo = new Todo();
     this._unbindEvents();
 
@@ -90,22 +99,26 @@ module.exports = Backboen.View.extend({
   },
 
   _unbindEvents : function() {
+    'use strict';
     this.stopListening(this.model);
   },
 
   _bindEvents : function() {
-    this.listenTo(this.model, 'change'. this.handleChange);
+    'use strict';
+    this.listenTo(this.model, 'change', this.handleChange);
     this.listenTo(this.model, 'error sync', function() {
       this.enable();
     });
   },
 
   handleChange : function() {
+    'use strict';
     this.$('.todo__append__content').val(this.model.get('content'));
     this.$('.todo__append__date').val(this.model.get('limitDate'));
   },
 
   render: function() {
+    'use strict';
     this.$el.empty().append(this.template());
 
     this.$('.todo__append__content--alert').append(this._alert.render().$el.hide());

@@ -30,8 +30,9 @@ gulp.task 'watch:browserify', ->
   b.transform transform
 
   b.plugin remapify, [{
-    src: './assets/js/**/*.js'
+    src: './**/*.js'
     expose: 'app/'
+    cwd: 'assets/js'
   }, {
     src: './**/*.html'
     expose: 'tmpl'

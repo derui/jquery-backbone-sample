@@ -17,6 +17,7 @@ module.exports = Backbone.View.extend({
   },
 
   initialize: function(param) {
+    'use strict';
     /**
      * 初期表示時のアニメーションを行うかどうか
      * @property _initialAnimation
@@ -31,6 +32,7 @@ module.exports = Backbone.View.extend({
    * @private
    */
   _toggleOverlay : function() {
+    'use strict';
     this.$('.todo__content__overlay').toggleClass('is-active');
   },
 
@@ -39,6 +41,7 @@ module.exports = Backbone.View.extend({
    * @method onFinishedClick
    */
   onFinishedChange: function() {
+    'use strict';
 
     // リクエストの開始時点でオーバーレイをトグルする
     this.listenToOnce(this.model, 'request error', this._toggleOverlay);
@@ -57,6 +60,7 @@ module.exports = Backbone.View.extend({
    * @private
    */
   _animateAndRemove: function() {
+    'use strict';
     this.$el.slideUp(200).fadeOut(200, this.remove.bind(this));
   },
 
@@ -66,6 +70,7 @@ module.exports = Backbone.View.extend({
    * @private
    */
   _toggleDeleteButton: function() {
+    'use strict';
     var $button = this.$('.todo__delete__button');
     $button.prop('disabled', $button.prop('disabled'));
   },
@@ -75,6 +80,7 @@ module.exports = Backbone.View.extend({
    * @method onDeleteClick
    */
   onDeleteClick: function() {
+    'use strict';
     if (this.$('.todo__delete__button').prop('disabled')) {
       return;
     }
@@ -86,6 +92,7 @@ module.exports = Backbone.View.extend({
   },
 
   render: function() {
+    'use strict';
     var limitDate = this.model.get('limitDate');
     this.$el.empty();
 
