@@ -2,28 +2,24 @@
  * それぞれのTODOに対するビューを定義する
  */
 
-var Backbone = require('backbone');
+var Marionette = require('backbone.marionette');
 var _ = require('underscore');
 var moment = require('moment');
 
-module.exports = Backbone.View.extend({
+module.exports = Marionette.ItemView.extend({
   className : 'small-12 large-12 columns todo__content',
 
   template: require('tmpl/todoRow'),
 
-  events : {
-    'click .finished__current-state' : 'onFinishedChange',
-    'click .todo__delete__button' : 'onDeleteClick'
+  ui: {
+    finished : '.finished__current-state',
+    del: '.todo__delete__button',
+    overlay: '.todo__content__overlay'
   },
 
-  initialize: function(param) {
-    'use strict';
-    /**
-     * 初期表示時のアニメーションを行うかどうか
-     * @property _initialAnimation
-     * @type Boolean
-     */
-    this._initialAnimation = (param && param.initialAnimation) || false;
+  events : {
+    'click @ui.finished' : 'onFinishedChange',
+    'click @del' : 'onDeleteClick'
   },
 
   /**
@@ -33,7 +29,7 @@ module.exports = Backbone.View.extend({
    */
   _toggleOverlay : function() {
     'use strict';
-    this.$('.todo__content__overlay').toggleClass('is-active');
+    this.ui.overlay.toggleClass('is-active');
   },
 
   /**
@@ -69,8 +65,7 @@ module.exports = Backbone.View.extend({
    */
   _toggleDeleteButton: function() {
     'use strict';
-    var $button = this.$('.todo__delete__button');
-    $button.prop('disabled', $button.prop('disabled'));
+    this.ui.del.prop('disabled', this.ui.del.prop('disabled'));
   },
 
   /**
@@ -79,7 +74,7 @@ module.exports = Backbone.View.extend({
    */
   onDeleteClick: function() {
     'use strict';
-    if (this.$('.todo__delete__button').prop('disabled')) {
+    if (this.ui.del.prop('disabled')) {
       return;
     }
 
@@ -89,31 +84,27 @@ module.exports = Backbone.View.extend({
     this.model.destroy();
   },
 
-  render: function() {
-    'use strict';
-    var limitDate = this.model.get('limitDate');
-    this.$el.empty();
+  templateHelpers: {
+    showLimitDate: function() {
+      if (this.limitDate) {
+        return moment(this.model.get('limitDate')).format('YYYY/MM/DD HH:MM');
+      } else {
+        return 'No limit';
+      }
+    }
+  },
 
-    if (this._initialAnimation) {
+  onRender: function() {
+    'use strict';
+
+    if (this.options.initialAnimation) {
       this.$el.hide();
     }
 
-    if (limitDate) {
-      limitDate = moment(this.model.get('limitDate')).format('YYYY/MM/DD HH:MM');
-    } else {
-      limitDate = 'No limit';
-    }
+    this.ui.finished.prop('checked', this.model.isFinished());
 
-    this.$el.append(this.template(_.extend({}, this.model.attributes, {
-      limitDate : limitDate
-    })));
-
-    this.$('.finished__current-state').prop('checked', this.model.isFinished());
-
-    if (this._initialAnimation) {
+    if (this.options.initialAnimation) {
       this.$el.slideDown(200);
     }
-
-    return this;
   }
 });
