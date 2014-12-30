@@ -1,28 +1,35 @@
 
-var Backbone = require('backbone');
+var Marionette = require('backbone.marionette');
 var Todo = require('app/models/todo');
 var Alert = require('./alert');
+var _ = require('underscore');
 
-module.exports = Backbone.View.extend({
+module.exports = Marionette.LayoutView.extend({
   tagName: 'div',
   className: 'todo-appender row collapse',
 
   template: require('tmpl/appender.html'),
 
-  initialize: function() {
-    'use strict';
-    this.refreshTodo();
+  regions : {
+    alert: '.todo__append__content--alert'
+  },
 
-    this._alert = new Alert({
-      type: 'warning',
-      model : this.model
-    });
+  ui :{
+    date: '.todo__append__date',
+    content :'.todo__append__content',
+    submit: '.todo__append__submit'
   },
 
   events: {
-    'change .todo__append__date' : 'onDateChange',
-    'change .todo__append__content' : 'onContentChange',
-    'click .todo__append__submit' : 'onAppendClick'
+    'change @ui.date' : 'onDateChange',
+    'change @ui.content' : 'onContentChange',
+    'click @ui.submit' : 'onAppendClick'
+  },
+
+  modelEvents : {
+    'change': 'handleChange',
+    'request': 'disable',
+    'error sync': 'enable'
   },
 
   /**
@@ -32,9 +39,7 @@ module.exports = Backbone.View.extend({
    */
   onDateChange: function() {
     'use strict';
-    var $date = this.$('.todo__append__date');
-
-    this.model.set('limitDate', $date.val());
+    this.model.set('limitDate', this.ui.date.val());
   },
 
   /**
@@ -44,9 +49,7 @@ module.exports = Backbone.View.extend({
    */
   onContentChange: function() {
     'use strict';
-    var $content = this.$('.todo__append__content');
-
-    this.model.set('content', $content.val());
+    this.model.set('content', this.ui.content.val());
   },
 
   /**
@@ -56,11 +59,13 @@ module.exports = Backbone.View.extend({
    */
   onAppendClick: function() {
     'use strict';
-    if (this.$('.todo__append__button').prop('disabled')) {
+    if (this.ui.submit.prop('disabled')) {
       return;
     }
 
-    this._alert.hide();
+    if (!this.model.isValid(true)) {
+      return;
+    }
 
     this.listenToOnce(this.model, 'sync', function() {
       this.collection.add(this.model);
@@ -83,44 +88,30 @@ module.exports = Backbone.View.extend({
 
   _setAllElementDisabled: function(disabled) {
     'use strict';
-    this.$('.todo__append__button').prop('disabled', disabled);
-    this.$('.todo__append__content').prop('disabled', disabled);
-    this.$('.todo__append__date').prop('disabled', disabled);
+    _.values(this.ui, function($v) {
+      $v.prop('disabled', disabled);
+    });
   },
 
   refreshTodo : function() {
     'use strict';
     var todo = new Todo();
-    this._unbindEvents();
-
-    this.model = todo;
-    this._bindEvents();
-  },
-
-  _unbindEvents : function() {
-    'use strict';
     this.stopListening(this.model);
-  },
-
-  _bindEvents : function() {
-    'use strict';
-    this.listenTo(this.model, 'change', this.handleChange);
-    this.listenTo(this.model, 'request', this.disable);
-    this.listenTo(this.model, 'error sync', this.enable);
+    this.model = todo;
+    this.bindEntityEvents();
   },
 
   handleChange : function() {
     'use strict';
-    this.$('.todo__append__content').val(this.model.get('content'));
-    this.$('.todo__append__date').val(this.model.get('limitDate'));
+    this.ui.content.val(this.model.get('content'));
+    this.ui.date.val(this.model.get('limitDate'));
   },
 
-  render: function() {
+  onRender: function() {
     'use strict';
-    this.$el.empty().append(this.template());
-
-    this.$('.todo__append__content--alert').append(this._alert.render().$el.hide());
-
-    return this;
+    this.getRegion('alert').show(new Alert({
+      type: 'warning',
+      model: this.model
+    }));
   }
 });

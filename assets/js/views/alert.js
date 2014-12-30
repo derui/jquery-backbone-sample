@@ -1,13 +1,17 @@
 
-var Backbone = require('backbone');
+var Marionette = require('backbone.marionette');
+var _ = require('underscore');
 
-module.exports = Backbone.View.extend({
+module.exports = Marionette.ItemView.extend({
   className : 'alert-box',
 
   template: require('tmpl/show-alert.html'),
+  ui: {
+    close : '.close'
+  },
 
   events : {
-    'click .close' : function() {
+    'click @ui.close' : function() {
       'use strict';
       this.hide();
       if (this.onClose) {
@@ -16,61 +20,32 @@ module.exports = Backbone.View.extend({
     }
   },
 
-  initialize: function(param) {
-    'use strict';
-    this.listenTo(this.model, 'invalid', this.handleInvalid);
-
-    this.type = (param && param.type) || 'warning';
-    this.text = '';
+  modelEvents: {
+    'validated': 'render'
   },
 
-  handleInvalid: function(model, error) {
-    'use strict';
-    this.text = error;
+  templateHelpers: function() {
+    var self = this;
+    return {
+      showErrorText: function() {
+        var validated = this.model.validationError;
 
-    this.render().$el.show();
+        if (validated && validated.length > 0) {
+          return _.values(validated).join('<br>');
+        }
+        return '';
+      }
+    };
   },
 
-  setModel : function(model) {
+  onRender : function() {
     'use strict';
-    this.stopListening(this.model);
-    this.model = model;
-
-    return this;
-  },
-
-  /**
-   * 強制的に表示させる
-   *
-   * @method show
-   * @return {Views.Alert}
-   */
-  show: function() {
-    'use strict';
-    this.$el.show();
-
-    return this;
-  },
-
-  /**
-   * 強制的に表示を閉じる
-   *
-   * @method hide
-   * @return {Views.Alert}
-   */
-  hide: function() {
-    'use strict';
-    this.$el.hide();
-
-    return this;
-  },
-
-  render : function() {
-    'use strict';
-    this.$el.empty().append(this.template({text : this.text}));
-
     this.$el.addClass(this.type);
 
-    return this;
+    if (this.model.isValid()) {
+      this.$el.hide();
+    } else {
+      this.$el.show();
+    }
   }
 });

@@ -3,9 +3,12 @@
  */
 
 var Backbone = require('backbone');
+require('backbone.validation');
 var moment = require('moment');
 var Api = require('app/utils/api-util');
 var _ = require('underscore');
+
+_.extend(Backbone.Model.prototype, Backbone.Validation.mixin);
 
 module.exports = Backbone.Model.extend({
   defaults: {
@@ -38,11 +41,10 @@ module.exports = Backbone.Model.extend({
     return !!this.get('finished');
   },
 
-  validate: function() {
-    'use strict';
-    if (!this.get('content') || !_.isString(this.get('content'))) {
-      return 'Content must contain valid string';
+  validation: {
+    content: {
+      required: true,
+      msg: 'Content must contain valid string'
     }
-    return undefined;
   }
 });

@@ -1,7 +1,7 @@
 /**
  * それぞれのTODOに対するビューを定義する
  */
-
+'use strict';
 var Marionette = require('backbone.marionette');
 var _ = require('underscore');
 var moment = require('moment');
@@ -19,7 +19,7 @@ module.exports = Marionette.ItemView.extend({
 
   events : {
     'click @ui.finished' : 'onFinishedChange',
-    'click @del' : 'onDeleteClick'
+    'click @ui.del' : 'onDeleteClick'
   },
 
   /**
@@ -28,7 +28,6 @@ module.exports = Marionette.ItemView.extend({
    * @private
    */
   _toggleOverlay : function() {
-    'use strict';
     this.ui.overlay.toggleClass('is-active');
   },
 
@@ -37,7 +36,6 @@ module.exports = Marionette.ItemView.extend({
    * @method onFinishedClick
    */
   onFinishedChange: function() {
-    'use strict';
     var throttle = _.throttle(_.bind(this._toggleOverlay, this), 500);
 
     // リクエストの開始、終了、エラー時にそれぞれトグルするようにする
@@ -47,24 +45,11 @@ module.exports = Marionette.ItemView.extend({
   },
 
   /**
-   * アニメーションと自身の削除を行う
-   * @method _animateAndRemove
-   * @private
-   */
-  _animateAndRemove: function() {
-    'use strict';
-    this.$el.slideUp(200).fadeOut(200, function() {
-      this.remove();
-    }.bind(this));
-  },
-
-  /**
    * 削除ボタンの有効と無効を切り替える
    * @method _toggleDeleteButton
    * @private
    */
   _toggleDeleteButton: function() {
-    'use strict';
     this.ui.del.prop('disabled', this.ui.del.prop('disabled'));
   },
 
@@ -73,21 +58,25 @@ module.exports = Marionette.ItemView.extend({
    * @method onDeleteClick
    */
   onDeleteClick: function() {
-    'use strict';
     if (this.ui.del.prop('disabled')) {
       return;
     }
 
     // modelをdestoryし、正常に終了したら自身も削除する
-    this.listenToOnce(this.model, 'sync', this._animateAndRemove);
     this.listenToOnce(this.model, 'request error', this._toggleDeleteButton);
-    this.model.destroy();
+    this.listenToOnce(this.model, 'error', function() {
+      this.$el.slideDown(200);
+    }.bind(this));
+
+    this.$el.show().slideUp(500, function() {
+      this.model.destroy();
+    }.bind(this));
   },
 
   templateHelpers: {
     showLimitDate: function() {
       if (this.limitDate) {
-        return moment(this.model.get('limitDate')).format('YYYY/MM/DD HH:MM');
+        return moment(this.limitDate).format('YYYY/MM/DD HH:MM');
       } else {
         return 'No limit';
       }
@@ -95,16 +84,7 @@ module.exports = Marionette.ItemView.extend({
   },
 
   onRender: function() {
-    'use strict';
-
-    if (this.options.initialAnimation) {
-      this.$el.hide();
-    }
-
+    this.$el.hide().slideDown(200);
     this.ui.finished.prop('checked', this.model.isFinished());
-
-    if (this.options.initialAnimation) {
-      this.$el.slideDown(200);
-    }
   }
 });
