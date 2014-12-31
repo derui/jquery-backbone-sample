@@ -1,7 +1,6 @@
 /**
  * それぞれのTODOに対するビューを定義する
  */
-'use strict';
 var Marionette = require('backbone.marionette');
 var _ = require('underscore');
 var moment = require('moment');
@@ -28,6 +27,7 @@ module.exports = Marionette.ItemView.extend({
    * @private
    */
   _toggleOverlay : function() {
+    'use strict';
     this.ui.overlay.toggleClass('is-active');
   },
 
@@ -36,6 +36,7 @@ module.exports = Marionette.ItemView.extend({
    * @method onFinishedClick
    */
   onFinishedChange: function() {
+    'use strict';
     var throttle = _.throttle(_.bind(this._toggleOverlay, this), 500);
 
     // リクエストの開始、終了、エラー時にそれぞれトグルするようにする
@@ -50,6 +51,7 @@ module.exports = Marionette.ItemView.extend({
    * @private
    */
   _toggleDeleteButton: function() {
+    'use strict';
     this.ui.del.prop('disabled', this.ui.del.prop('disabled'));
   },
 
@@ -58,6 +60,7 @@ module.exports = Marionette.ItemView.extend({
    * @method onDeleteClick
    */
   onDeleteClick: function() {
+    'use strict';
     if (this.ui.del.prop('disabled')) {
       return;
     }
@@ -75,6 +78,7 @@ module.exports = Marionette.ItemView.extend({
 
   templateHelpers: {
     showLimitDate: function() {
+      'use strict';
       if (this.limitDate) {
         return moment(this.limitDate).format('YYYY/MM/DD HH:MM');
       } else {
@@ -84,6 +88,7 @@ module.exports = Marionette.ItemView.extend({
   },
 
   onRender: function() {
+    'use strict';
     this.$el.hide().slideDown(200);
     this.ui.finished.prop('checked', this.model.isFinished());
   }

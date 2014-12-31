@@ -1,4 +1,3 @@
-
 var Marionette = require('backbone.marionette');
 var _ = require('underscore');
 
@@ -11,26 +10,23 @@ module.exports = Marionette.ItemView.extend({
   },
 
   events : {
-    'click @ui.close' : function() {
-      'use strict';
-      this.hide();
-      if (this.onClose) {
-        this.onClose();
-      }
-    }
+    'click @ui.close' : 'onClose'
   },
 
-  modelEvents: {
-    'validated': 'render'
+  onClose: function() {
+    'use strict';
+    this.destroy();
   },
 
   templateHelpers: function() {
+    'use strict';
     var self = this;
     return {
       showErrorText: function() {
-        var validated = this.model.validationError;
+        var validated = self.options.errors;
 
-        if (validated && validated.length > 0) {
+        if (!self.options.isValid) {
+          console.log(_.values(validated).join('<br>'));
           return _.values(validated).join('<br>');
         }
         return '';
@@ -42,10 +38,8 @@ module.exports = Marionette.ItemView.extend({
     'use strict';
     this.$el.addClass(this.type);
 
-    if (this.model.isValid()) {
+    if (this.options.isValid) {
       this.$el.hide();
-    } else {
-      this.$el.show();
     }
   }
 });

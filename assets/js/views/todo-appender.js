@@ -29,7 +29,18 @@ module.exports = Marionette.LayoutView.extend({
   modelEvents : {
     'change': 'handleChange',
     'request': 'disable',
-    'error sync': 'enable'
+    'error sync': 'enable',
+    'validated' : 'handleValidated'
+  },
+
+  handleValidated: function(isValid, model, errors) {
+    'use strict';
+    this.getRegion('alert').show(new Alert({
+      type: 'warning',
+      isValid: isValid,
+      errors: errors,
+      model: model
+    }));
   },
 
   /**
@@ -62,6 +73,8 @@ module.exports = Marionette.LayoutView.extend({
     if (this.ui.submit.prop('disabled')) {
       return;
     }
+
+    this.getRegion('alert').empty();
 
     if (!this.model.isValid(true)) {
       return;
@@ -99,19 +112,13 @@ module.exports = Marionette.LayoutView.extend({
     this.stopListening(this.model);
     this.model = todo;
     this.bindEntityEvents();
+    this.ui.date.val(null);
+    this.ui.content.val(null);
   },
 
   handleChange : function() {
     'use strict';
     this.ui.content.val(this.model.get('content'));
     this.ui.date.val(this.model.get('limitDate'));
-  },
-
-  onRender: function() {
-    'use strict';
-    this.getRegion('alert').show(new Alert({
-      type: 'warning',
-      model: this.model
-    }));
   }
 });
